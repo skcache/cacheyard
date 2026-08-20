@@ -1,0 +1,5 @@
+/docs/
+/engineering-notebook.html
+/build/
+/build-*/
+*.DS_Store
