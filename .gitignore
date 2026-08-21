@@ -2,4 +2,5 @@
 /engineering-notebook.html
 /build/
 /build-*/
+/cmake-build-*/
 *.DS_Store

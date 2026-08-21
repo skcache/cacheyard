@@ -14,6 +14,17 @@ cacheyard_core (static library)
 
 Both executables link to `cacheyard_core`. There are no third-party dependencies yet; the compiler supplies the normal C++ runtime and standard library.
 
+The CMake structure follows the same ownership boundaries as the graph:
+
+```text
+CMakeLists.txt          project policy and subdirectory orchestration
+cmake/                  reusable warning and sanitizer helpers
+src/CMakeLists.txt      library and application targets
+tests/CMakeLists.txt    test target and CTest registration
+```
+
+`src/` is a source directory, not a build directory. Configure from the repository root with `cmake -S . -B <build-dir>` so generated files stay in an ignored out-of-source build tree.
+
 ## Build and test
 
 Configure and build the default tree:
@@ -44,6 +55,12 @@ Optional sanitizer scaffolding is available for later tasks:
 cmake -S . -B build-asan -DCMAKE_BUILD_TYPE=Debug -DCACHEYARD_ENABLE_SANITIZERS=ON
 cmake --build build-asan
 ctest --test-dir build-asan --output-on-failure
+```
+
+To inspect the actual compile and link commands while learning:
+
+```bash
+cmake --build build-debug --verbose
 ```
 
 ## Current scope
