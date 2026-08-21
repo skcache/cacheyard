@@ -2,21 +2,28 @@ cmake_minimum_required(VERSION 3.20)
 
 project(cacheyard VERSION 0.1.0 LANGUAGES CXX)
 
-# Keep compiler extensions out of the public build contract. Targets still
-# request the language level they need with target_compile_features().
-set(CMAKE_CXX_EXTENSIONS OFF)
-
 include(CTest)
 
-option(CACHEYARD_ENABLE_WARNINGS "Enable useful compiler warnings" ON)
-option(CACHEYARD_ENABLE_SANITIZERS "Enable AddressSanitizer and UBSan" OFF)
+add_library(cacheyard_core STATIC
+    src/bootstrap.cpp
+)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include(CompilerWarnings)
-include(Sanitizers)
+target_compile_features(cacheyard_core PUBLIC cxx_std_20)
+target_include_directories(cacheyard_core
+    PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}/include"
+)
 
-add_subdirectory(src)
+add_executable(cacheyard
+    src/main.cpp
+)
+target_link_libraries(cacheyard PRIVATE cacheyard_core)
+
+add_executable(cacheyard_tests
+    tests/bootstrap_test.cpp
+)
+target_link_libraries(cacheyard_tests PRIVATE cacheyard_core)
 
 if(BUILD_TESTING)
-    add_subdirectory(tests)
+    add_test(NAME cacheyard.bootstrap COMMAND cacheyard_tests)
 endif()
